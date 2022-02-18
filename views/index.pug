@@ -1,0 +1,23 @@
+extends layout.pug
+
+block content
+    h1 Books 
+    p
+      a(href="/books/new" class="button") Create New Book
+    main 
+        div.container
+            table 
+                thead 
+                    tr 
+                        th Title
+                        th Author
+                        th Genre
+                        th Year
+                    tbody
+                        each book in bookArray    
+                            tr 
+                                td 
+                                    a( href=`/books/${book.id}`) #{book.bookTitle}
+                                td #{book.author}
+                                td #{book.genre} 
+                                td #{book.year}
