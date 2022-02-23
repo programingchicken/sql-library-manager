@@ -19,10 +19,10 @@ function asyncHandler(cb) {
             } else if (err.name === 'SequelizeValidationError') {
                     const reqID = req.params.id
                     const book = await Book.findByPk(reqID)
-                    res.render('update-book', { authorized: true, title: "Update Book", book, errText: err.message})
+                    res.render('update-book', { authorized: true, title: "Update Book", id: reqID ,book, errText: err.message})
 
                 //didnt find page error
-            } else if (res.status === 404){
+            } else if (err.name === 'GlobalErrorHandler'){
                 res.render('page-not-found', { message: 404, title: "Page Not Found", messageTwo: "Page didn't load." })
             } else {
                 res.render('page-not-found', { message: 500, title: "Server Error", messageTwo: "Server didn't load." })
@@ -36,7 +36,7 @@ function asyncHandler(cb) {
 //start database up with 2 books
 router.get('/', asyncHandler(async (req, res) => {
     const book1 = await Book.build({
-        bookTitle: "The Hunger Games",
+        title: "The Hunger Games",
         author: "Suzanne Collins",
         genre: "Fantasy",
         year: "2008"
@@ -44,7 +44,7 @@ router.get('/', asyncHandler(async (req, res) => {
     await book1.save()
 
     const book2 = await Book.build({
-        bookTitle: "The Hunger Games 2",
+        title: "The Hunger Games 2",
         author: "Suzanne Collins",
         genre: "Fantasy",
         year: "2009"
@@ -52,7 +52,7 @@ router.get('/', asyncHandler(async (req, res) => {
     await book2.save()
 
     const book3 = await Book.build({
-        bookTitle: "The Hunger Games 3",
+        title: "The Hunger Games 3",
         author: "Suzanne Collins",
         genre: "Fantasy",
         year: "2010"
@@ -60,7 +60,7 @@ router.get('/', asyncHandler(async (req, res) => {
     await book3.save()
 
     const book4 = await Book.build({
-        bookTitle: "The Hunger Games 4",
+        title: "The Hunger Games 4",
         author: "Suzanne Collins",
         genre: "Fantasy",
         year: "2011"
@@ -68,7 +68,7 @@ router.get('/', asyncHandler(async (req, res) => {
     await book4.save()
 
     const book5 = await Book.build({
-        bookTitle: "The Hunger Games 5",
+        title: "The Hunger Games 5",
         author: "Suzanne Collins",
         genre: "Fantasy",
         year: "2012"
@@ -76,7 +76,7 @@ router.get('/', asyncHandler(async (req, res) => {
     await book5.save()
 
     const book6 = await Book.build({
-        bookTitle: "The Hunger Games 6",
+        title: "The Hunger Games 6",
         author: "Suzanne Collins",
         genre: "Fantasy",
         year: "2013"
@@ -109,7 +109,7 @@ router.get('/books/new', asyncHandler(async (req, res) => {
 //Create new Book
 router.post('/books/new', asyncHandler(async (req, res) => {
     //build data in Book
-    const book = await Book.build({ bookTitle: req.body.title, author: req.body.author, genre: req.body.genre, year: req.body.year });
+    const book = await Book.build({ title: req.body.title, author: req.body.author, genre: req.body.genre, year: req.body.year });
     if (book) {
         await book.save()
         res.redirect('/books')
@@ -143,19 +143,19 @@ router.post('/books/:id', asyncHandler(async (req, res) => {
 
 // testing for book title or author
     if (req.body.title !== undefined && req.body.author !== undefined) {
-        await book.update({ bookTitle: req.body.title, author: req.body.author, genre: req.body.genre, year: req.body.year })
+        await book.update({ id: reqID, title: req.body.title, author: req.body.author, genre: req.body.genre, year: req.body.year })
         res.redirect('/books')
     } else {
-        res.sendStatus(404);
+        return err
     }
 }))
 
 //Delete book
 router.post('/books/:id/delete', asyncHandler(async (req, res) => {
     const reqID = req.params.id;
-    await Book.destroy({ where: { id: reqID } });
-    res.redirect('/books')
     if (reqID) {
+        await Book.destroy({ where: { id: reqID } });
+        res.redirect('/books')
         res.send('Deleted');
     } else {
         return err

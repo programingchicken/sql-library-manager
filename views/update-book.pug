@@ -2,14 +2,14 @@ extends layout.pug
 
 block content 
     h1 #{title}
-    form(method="post" action="")
+    form(method="post" action=`/books/${id}`)
         if authorized
             h2(class="error") Oooops!
             ul(class="error")
                 li #{errText}
         p 
             label(for="title") Title 
-            input(name="title" type="text" id="bookTitle" value=`${book.bookTitle}`)
+            input(name="title" type="text" id="bookTitle" value=`${book.title}`)
         p 
             label(for="author") Author 
             input(name="author" type="text" id="author" value=`${book.author}` )

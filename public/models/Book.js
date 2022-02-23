@@ -13,7 +13,7 @@ class Book extends Model { }
   }
 Book.init({
   //book title
-  bookTitle: {
+  title: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
