@@ -91,8 +91,8 @@ router.get('/books', asyncHandler(async (req, res) => {
     //find all data in books
     const bookArray = await Book.findAll()
     if (bookArray) {
+
         res.render('index', { bookArray })
-        // res.send(console.log(res.json(bookArray)))
 
     } else {
         res.sendStatus(404);
@@ -156,7 +156,6 @@ router.post('/books/:id/delete', asyncHandler(async (req, res) => {
     if (reqID) {
         await Book.destroy({ where: { id: reqID } });
         res.redirect('/books')
-        res.send('Deleted');
     } else {
         return err
     }
